@@ -14,19 +14,31 @@ var vx = 0;
 var vy = 0;
 
 let snake = [[py, px]];
+//let available = new Set();
 
 window.onload = function() {
     board = document.getElementById("grid");
+    printScore = document.getElementById("score");
     board.height = rows * cellSize;
     board.width = cols * cellSize;
     context = board.getContext("2d");
-
     document.addEventListener("keydown", turn);
+
+    //initializeSet();
 
     setInterval(update, 100);
 }
-
+/*
+function initializeSet() {
+    for (let row = 0; row < rows; ++row) {
+        for (let col = 0; col < cols; ++col) {
+            available.add((row*cols*cellSize) + (col*cellSize));
+        }
+    }
+}
+*/
 function update() {
+    
     moveSnake();
 
     context.fillStyle = "black";
@@ -40,7 +52,6 @@ function update() {
         context.fillRect(snake[i][1], snake[i][0], cellSize, cellSize);
     }
     
-    
 }
 
 function moveSnake() {
@@ -52,20 +63,35 @@ function moveSnake() {
     if (py > board.height-cellSize) {py = 0;}
     if (py < 0) {py = board.height-cellSize;}
 
-    snake.push([py,px])
+    snake.push([py,px]);
+    //available.delete((py*cols)+px);
 
     if(px == rx && py == ry) {
         score ++;
+        printScore.innerHTML = score;
         moveFood();
     }
     else{
+        //available.add((snake[0]*cols)+snake[1])
         snake.shift();
     }
-
-    
+    checkDeath();
 }
 
 function moveFood() {
+    /*
+
+    let maxLen = available.size;
+    randPick = Math.floor(Math.random()*maxLen-1);
+    let iter = available.values();
+
+    for (let i = 0; i<randPick; ++i) {
+        iter = iter.next
+    }
+
+    rx = (iter.value % cols) * cellSize;
+    ry = (Math.floor(iter.value / cols)) * cellSize;
+    */
     rx = Math.floor(Math.random() * (cols-1)) * cellSize;
     ry = Math.floor(Math.random() * (rows-1)) * cellSize;
 }
@@ -90,5 +116,17 @@ function turn(input) {
     else if (input.code == "Space") {
         vx = 0;
         vy = 0;
+    }
+}
+
+function checkDeath() {
+    head = snake[snake.length-1];
+    
+
+    for (let i =0; i<snake.length-1; ++i) {
+        if (snake[i][0] == head[0] && snake[i][1] == head[1]) {
+            console.log("slice")
+            snake = snake.slice(i+1);
+        } 
     }
 }
