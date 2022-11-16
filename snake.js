@@ -18,51 +18,54 @@ window.onload = function() {
     board.width = cols * cellSize;
     context = board.getContext("2d");
 
-    document.addEventListener("keydown", moveSnake);
+    document.addEventListener("keydown", turn);
 
-    setInterval(update, 50);
+    setInterval(update, 500);
 }
 
 function update() {
+    moveSnake();
+
     context.fillStyle = "black";
     context.fillRect(0,0,board.width,board.height);
-
-    context.fillStyle = "white";
-    context.fillRect(px, py, cellSize, cellSize);
 
     context.fillStyle = "red";
     context.fillRect(rx, ry, cellSize, cellSize);
 
-    px = px + (vx*cellSize);
-    if (px >= board.width) {px = 0;}
-    if (px < 0) {px = board.width-1;}
+    context.fillStyle = "white";
+    context.fillRect(px, py, cellSize, cellSize);
+
     
-    py = py + (vy*cellSize);
-    if (py >= board.height) {py = 0;}
-    if (py < 0) {py = board.height-1;}
 }
 
-function moveSnake(input) {
+function moveSnake() {
+    px = px + (vx*cellSize);
+    if (px > board.width - cellSize) {px = 0;}
+    if (px < 0) {px = board.width-cellSize;}
+    
+    py = py + (vy*cellSize);
+    if (py > board.height-cellSize) {py = 0;}
+    if (py < 0) {py = board.height-cellSize;}
+}
+
+
+function turn(input) {
     if (input.code == "ArrowUp" && vy != 1) {
         vx = 0;
         vy = -1;
     }
-
     else if (input.code == "ArrowDown" && vy != -1) {
         vx = 0;
         vy = 1;
     }
-
     else if (input.code == "ArrowLeft" && vx != 1) {
         vx = -1;
         vy = 0;
     }
-
     else if (input.code == "ArrowRight" && vx != -1) {
         vx = 1;
         vy = 0;
     }
-
     else if (input.code == "Space") {
         vx = 0;
         vy = 0;
