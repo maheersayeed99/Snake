@@ -1,10 +1,10 @@
 
-var rows = 10;
-var cols = 10;
+var rows = 6;
+var cols = 6;
 var cellSize = 100; 
 var board;
 var context;
-var highScore = 0;
+var currHigh = 0;
 
 var px = cols/2 * cellSize;
 var py = rows/2 * cellSize;
@@ -17,9 +17,12 @@ let snake = [[py, px]];
 let available = {};
 let colorArr = ["lime","cyan", "purple","red","orange","yellow"];
 
+var turnFix = true
+
 window.onload = function() {
     board = document.getElementById("grid");
     printScore = document.getElementById("score");
+    highScore = document.getElementById("high");
     board.height = rows * cellSize;
     board.width = cols * cellSize;
     context = board.getContext("2d");
@@ -27,7 +30,7 @@ window.onload = function() {
 
     initializeSet();
 
-    setInterval(update, 100);
+    setInterval(update, 200);
 }
 
 function initializeSet() {
@@ -52,6 +55,8 @@ function update() {
     for (let i = 0; i<snake.length; i++) {
         context.fillRect(snake[i][1], snake[i][0], cellSize, cellSize);
     }
+
+    turnFix = true;
     
 }
 
@@ -106,25 +111,35 @@ function moveFood() {
 }
 
 function turn(input) {
-    if (input.code == "ArrowUp" && vy != 1) {
-        vx = 0;
-        vy = -1;
-    }
-    else if (input.code == "ArrowDown" && vy != -1) {
-        vx = 0;
-        vy = 1;
-    }
-    else if (input.code == "ArrowLeft" && vx != 1) {
-        vx = -1;
-        vy = 0;
-    }
-    else if (input.code == "ArrowRight" && vx != -1) {
-        vx = 1;
-        vy = 0;
-    }
-    else if (input.code == "Space") {
-        vx = 0;
-        vy = 0;
+
+    if (turnFix == true)
+    {
+        if (input.code == "ArrowUp" && vy == 0) {
+            vx = 0;
+            vy = -1;
+            turnFix = false;
+        }
+        else if (input.code == "ArrowDown" && vy == 0) {
+            vx = 0;
+            vy = 1;
+            turnFix = false;
+        }
+        else if (input.code == "ArrowLeft" && vx == 0) {
+            vx = -1;
+            vy = 0;
+            turnFix = false;
+        }
+        else if (input.code == "ArrowRight" && vx == 0) {
+            vx = 1;
+            vy = 0;
+            turnFix = false;
+        }
+        else if (input.code == "Space") {
+            vx = 0;
+            vy = 0;
+            turnFix = false;
+        }
+        
     }
 }
 
@@ -137,8 +152,10 @@ function checkDeath() {
             for (let j = i; j>= 0; --j) {
                 delete available[(snake[j][0]*cols)+(snake[j][1])]
             }
+            currHigh = Math.max(currHigh, snake.length-1);
             snake = snake.slice(i+1);
             printScore.innerHTML = snake.length-1;
+            highScore.innerHTML = currHigh;
             colorArr.push(colorArr.shift());
         } 
     }
