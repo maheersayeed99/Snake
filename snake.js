@@ -1,10 +1,10 @@
 
-var rows = 8;
-var cols = 8;
-var cellSize = 60;
+var rows = 10;
+var cols = 10;
+var cellSize = 100; 
 var board;
 var context;
-var score = 0;
+var highScore = 0;
 
 var px = cols/2 * cellSize;
 var py = rows/2 * cellSize;
@@ -15,6 +15,7 @@ var vy = 1;
 
 let snake = [[py, px]];
 let available = {};
+let colorArr = ["lime","cyan", "purple","red","orange","yellow"];
 
 window.onload = function() {
     board = document.getElementById("grid");
@@ -35,7 +36,6 @@ function initializeSet() {
             available[(row*cellSize*cols)+(col*cellSize)] = [row*cellSize, col*cellSize];
         }
     }
-    //console.log(Object.keys(available).length)
 }
 
 function update() {
@@ -45,18 +45,20 @@ function update() {
     context.fillStyle = "black";
     context.fillRect(0,0,board.width,board.height);
 
-    context.fillStyle = "red";
+    context.fillStyle = "white";
     context.fillRect(rx, ry, cellSize, cellSize);
 
-    context.fillStyle = "white";
+    context.fillStyle = colorArr[0];
     for (let i = 0; i<snake.length; i++) {
         context.fillRect(snake[i][1], snake[i][0], cellSize, cellSize);
     }
-    console.log(Object.keys(available).length)
     
 }
 
 function moveSnake() {
+
+    
+
     px = px + (vx*cellSize);
     if (px > board.width - cellSize) {px = 0;}
     if (px < 0) {px = board.width-cellSize;}
@@ -70,8 +72,7 @@ function moveSnake() {
 
 
     if(px == rx && py == ry) {
-        score ++;
-        printScore.innerHTML = score;
+        printScore.innerHTML = snake.length-1;
         moveFood();
     }
     else{
@@ -79,6 +80,7 @@ function moveSnake() {
         snake.shift();
     }
     checkDeath();
+    
 }
 
 function moveFood() {
@@ -86,19 +88,9 @@ function moveFood() {
 
     let maxLen = Object.keys(available).length;
     randPick = Math.floor(Math.random()*maxLen-1);
-    //console.log(randPick);
+
     let count = 0;
     var randKey;
-    /*
-    for (let key of available) {
-        count++;
-        randKey = key;
-        if (count == randPick)
-        {
-            break;
-        }
-    }
-    */
     for (const[key,value] of Object.entries(available)) {
         count++;
         randKey = value;
@@ -108,18 +100,9 @@ function moveFood() {
         }
     }
 
-    //console.log(randKey);
-    //rx = ((randKey) % (cols*rows));
-    //ry = (Math.floor(randKey / cols));
     ry = randKey[0];
     rx = randKey[1];
     
-    //console.log(rx);
-    //console.log(ry);
-
-    
-    //rx = Math.floor(Math.random() * (cols-1)) * cellSize;
-    //ry = Math.floor(Math.random() * (rows-1)) * cellSize;
 }
 
 function turn(input) {
@@ -151,11 +134,12 @@ function checkDeath() {
 
     for (let i =0; i<snake.length-1; ++i) {
         if (snake[i][0] == head[0] && snake[i][1] == head[1]) {
-            //console.log("slice")
             for (let j = i; j>= 0; --j) {
                 delete available[(snake[j][0]*cols)+(snake[j][1])]
             }
             snake = snake.slice(i+1);
+            printScore.innerHTML = snake.length-1;
+            colorArr.push(colorArr.shift());
         } 
     }
 }
