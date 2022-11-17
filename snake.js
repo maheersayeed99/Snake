@@ -1,7 +1,7 @@
 
-var rows = 30;
-var cols = 30;
-var cellSize = 20;
+var rows = 10;
+var cols = 10;
+var cellSize = 60;
 var board;
 var context;
 var score = 0;
@@ -11,10 +11,10 @@ var py = rows/2 * cellSize;
 var rx = Math.floor(Math.random() * (cols-1)) * cellSize;
 var ry = Math.floor(Math.random() * (rows-1)) * cellSize;
 var vx = 0;
-var vy = 0;
+var vy = 1;
 
 let snake = [[py, px]];
-//let available = new Set();
+let available = {};
 
 window.onload = function() {
     board = document.getElementById("grid");
@@ -24,19 +24,22 @@ window.onload = function() {
     context = board.getContext("2d");
     document.addEventListener("keydown", turn);
 
-    //initializeSet();
+    initializeSet();
 
     setInterval(update, 100);
 }
-/*
+
 function initializeSet() {
     for (let row = 0; row < rows; ++row) {
         for (let col = 0; col < cols; ++col) {
-            available.add((row*cols*cellSize) + (col*cellSize));
+            //available.add((row*cols*cellSize) + (col*cellSize));
+            //available.add([row*cellSize, col*cellSize]);
+            available[(row*cellSize*cols)+(col*cellSize)] = [row*cellSize, col*cellSize];
         }
     }
+    console.log(Object.keys(available).length)
 }
-*/
+
 function update() {
     
     moveSnake();
@@ -51,6 +54,7 @@ function update() {
     for (let i = 0; i<snake.length; i++) {
         context.fillRect(snake[i][1], snake[i][0], cellSize, cellSize);
     }
+    console.log(Object.keys(available).length)
     
 }
 
@@ -65,6 +69,10 @@ function moveSnake() {
 
     snake.push([py,px]);
     //available.delete((py*cols)+px);
+    //available.delete([py,px]);
+
+    delete available[(py*cols)+(px)];
+
 
     if(px == rx && py == ry) {
         score ++;
@@ -73,27 +81,51 @@ function moveSnake() {
     }
     else{
         //available.add((snake[0]*cols)+snake[1])
+        //available.add([snake[0][1],snake[0][0]]);
+        available[(snake[0][0]*cols)+(snake[0][1])] = [snake[0][1], snake[0][0]];
         snake.shift();
     }
     checkDeath();
 }
 
 function moveFood() {
-    /*
+    
 
-    let maxLen = available.size;
+    let maxLen = Object.keys(available).length;
     randPick = Math.floor(Math.random()*maxLen-1);
-    let iter = available.values();
-
-    for (let i = 0; i<randPick; ++i) {
-        iter = iter.next
+    console.log(randPick);
+    let count = 0;
+    var randKey;
+    /*
+    for (let key of available) {
+        count++;
+        randKey = key;
+        if (count == randPick)
+        {
+            break;
+        }
+    }
+    */
+    for (const[key,value] of Object.entries(available)) {
+        count++;
+        randKey = value;
+        if (count == randPick)
+        {
+            break;
+        }
     }
 
-    rx = (iter.value % cols) * cellSize;
-    ry = (Math.floor(iter.value / cols)) * cellSize;
-    */
-    rx = Math.floor(Math.random() * (cols-1)) * cellSize;
-    ry = Math.floor(Math.random() * (rows-1)) * cellSize;
+    console.log(randKey);
+    //rx = ((randKey) % (cols*rows));
+    //ry = (Math.floor(randKey / cols));
+    rx = randKey[0];
+    ry = randKey[1];
+    console.log(rx);
+    console.log(ry);
+
+    
+    //rx = Math.floor(Math.random() * (cols-1)) * cellSize;
+    //ry = Math.floor(Math.random() * (rows-1)) * cellSize;
 }
 
 function turn(input) {
