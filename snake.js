@@ -1,8 +1,8 @@
 
 // Board dimentions
-var rows = 6;
-var cols = 6;
-var cellSize = 100; 
+var rows = 20;
+var cols = 20;
+var cellSize = 50; 
 var board;
 var context;
 var currHigh = 0;
@@ -42,7 +42,7 @@ window.onload = function() {
 
     initializeSet();                                // initialize available spots
 
-    setInterval(update, 200);                       // Update once every 200 ms
+    setInterval(update, 100);                       // Update once every 200 ms
 }
 
 // Fill availabke dictionary with every empty cell
@@ -175,7 +175,7 @@ function checkDeath() {
             for (let j = i; j>= 0; --j) {                               // Add entire cur off snake tail as available slots for food
                 delete available[(snake[j][0]*cols)+(snake[j][1])]
             }
-            
+
             currHigh = Math.max(currHigh, snake.length-1);
             snake = snake.slice(i+1);                       // Slice snake body literally
             printScore.innerHTML = snake.length-1;          // Update score
