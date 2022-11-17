@@ -1,6 +1,6 @@
 
-var rows = 10;
-var cols = 10;
+var rows = 8;
+var cols = 8;
 var cellSize = 60;
 var board;
 var context;
@@ -32,12 +32,10 @@ window.onload = function() {
 function initializeSet() {
     for (let row = 0; row < rows; ++row) {
         for (let col = 0; col < cols; ++col) {
-            //available.add((row*cols*cellSize) + (col*cellSize));
-            //available.add([row*cellSize, col*cellSize]);
             available[(row*cellSize*cols)+(col*cellSize)] = [row*cellSize, col*cellSize];
         }
     }
-    console.log(Object.keys(available).length)
+    //console.log(Object.keys(available).length)
 }
 
 function update() {
@@ -68,9 +66,6 @@ function moveSnake() {
     if (py < 0) {py = board.height-cellSize;}
 
     snake.push([py,px]);
-    //available.delete((py*cols)+px);
-    //available.delete([py,px]);
-
     delete available[(py*cols)+(px)];
 
 
@@ -80,9 +75,7 @@ function moveSnake() {
         moveFood();
     }
     else{
-        //available.add((snake[0]*cols)+snake[1])
-        //available.add([snake[0][1],snake[0][0]]);
-        available[(snake[0][0]*cols)+(snake[0][1])] = [snake[0][1], snake[0][0]];
+        available[(snake[0][0]*cols)+(snake[0][1])] = [snake[0][0], snake[0][1]];
         snake.shift();
     }
     checkDeath();
@@ -93,7 +86,7 @@ function moveFood() {
 
     let maxLen = Object.keys(available).length;
     randPick = Math.floor(Math.random()*maxLen-1);
-    console.log(randPick);
+    //console.log(randPick);
     let count = 0;
     var randKey;
     /*
@@ -115,13 +108,14 @@ function moveFood() {
         }
     }
 
-    console.log(randKey);
+    //console.log(randKey);
     //rx = ((randKey) % (cols*rows));
     //ry = (Math.floor(randKey / cols));
-    rx = randKey[0];
-    ry = randKey[1];
-    console.log(rx);
-    console.log(ry);
+    ry = randKey[0];
+    rx = randKey[1];
+    
+    //console.log(rx);
+    //console.log(ry);
 
     
     //rx = Math.floor(Math.random() * (cols-1)) * cellSize;
@@ -157,7 +151,10 @@ function checkDeath() {
 
     for (let i =0; i<snake.length-1; ++i) {
         if (snake[i][0] == head[0] && snake[i][1] == head[1]) {
-            console.log("slice")
+            //console.log("slice")
+            for (let j = i; j>= 0; --j) {
+                delete available[(snake[j][0]*cols)+(snake[j][1])]
+            }
             snake = snake.slice(i+1);
         } 
     }
