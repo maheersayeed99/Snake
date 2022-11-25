@@ -1,7 +1,7 @@
 
 // Board dimentions
-var rows = 20;
-var cols = 20;
+var rows = 8;
+var cols = 8;
 var cellSize = 50; 
 var board;
 var context;
@@ -42,7 +42,7 @@ window.onload = function() {
 
     initializeSet();                                // initialize available spots
 
-    setInterval(update, 100);                       // Update once every 200 ms
+    setInterval(update, 200);                       // Update once every 200 ms
 }
 
 // Fill availabke dictionary with every empty cell
